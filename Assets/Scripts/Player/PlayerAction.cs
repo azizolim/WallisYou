@@ -16,7 +16,7 @@ namespace Player
 
         void FixedUpdate()
         {
-            rigidbody.AddForce(_direction * speed);
+            rigidbody.velocity = _direction * speed;
         }
         public void ScoreAdd(int value = 1)
         {
