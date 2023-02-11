@@ -9,10 +9,14 @@ public class DieTrigger : Obstacle
     
     public override void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<PlayerAction>(out PlayerAction playerAction))
+     
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent(out IInteractable playerAction))
         {
             playerAction.Die();
         }
     }
-
 }

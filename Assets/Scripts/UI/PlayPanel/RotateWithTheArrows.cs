@@ -1,28 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class RotateWithTheArrows : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
-
+namespace UI.PlayPanel
 {
-    [SerializeField] private bool _isRight;
-    private Vector3 _rotateDirection;
-    public Vector3 RotateDirection => _rotateDirection;
-    public void OnPointerDown(PointerEventData eventData)
+    public class RotateWithTheArrows : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        if (_isRight)
+        [SerializeField] private bool _isRight;
+        private Vector3 _rotateDirection;
+        public Vector3 RotateDirection => _rotateDirection;
+        public void OnPointerDown(PointerEventData eventData)
         {
-            _rotateDirection = Vector3.back;
+            if (_isRight)
+            {
+                _rotateDirection = Vector3.back;
+            }
+            else
+            {
+                _rotateDirection = Vector3.forward;
+            }
         }
-        else
-        {
-            _rotateDirection = Vector3.forward;
-        }
-    }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        _rotateDirection = Vector3.zero;
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _rotateDirection = Vector3.zero;
+        }
     }
 }

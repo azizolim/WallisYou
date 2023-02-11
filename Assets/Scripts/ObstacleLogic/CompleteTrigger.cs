@@ -10,9 +10,9 @@ public class CompleteTrigger : Obstacle
     event CompleteHandler _complete;
     public override void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<PlayerAction>(out PlayerAction playerAction))
+        if (other.TryGetComponent(out IInteractable playerAction))
         {
-            playerAction.ScoreAdd();
+            playerAction.AddScore(1);
             _complete?.Invoke();
         }
     }

@@ -6,8 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class LevelControl : MonoBehaviour
 {
-    [SerializeField] private GameObject[] levels;
+    [SerializeField] private LevelLinks[] levels;
+    [SerializeField] private InputService inputService;
     private string _currentLevel = "CurrentLevel";
+    public LevelLinks CurrentLevel { get; private set; }
 
     private void Awake()
     {
@@ -30,6 +32,8 @@ public class LevelControl : MonoBehaviour
             level = 0;
             PlayerPrefs.SetInt(_currentLevel, level);
         }
-        Instantiate(levels[level]);
+       CurrentLevel= Instantiate(levels[level]);
+       CurrentLevel.TryGetComponent(out ObstacleService service);
+       service.SetInputService(inputService);
     }
 }

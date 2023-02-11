@@ -298,6 +298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2582706456002717561}
   - component: {fileID: -4528786996873689697}
+  - component: {fileID: -6651994101643281464}
   m_Layer: 0
   m_Name: level4
   m_TagString: Untagged
@@ -357,7 +358,19 @@ MonoBehaviour:
   curentObstacles:
   - {fileID: 836186870145330905}
   - {fileID: 4016816612797107373}
-  inputService: {fileID: 0}
+--- !u!114 &-6651994101643281464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2926299044795268547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddaf3447fd286c7439bb12d477edaf7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  finish: {fileID: 8749345402640816117}
 --- !u!1 &3302794215042277033
 GameObject:
   m_ObjectHideFlags: 0
