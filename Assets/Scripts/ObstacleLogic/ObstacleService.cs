@@ -31,7 +31,7 @@ public class ObstacleService : MonoBehaviour
         {
             inputService.UnsubscribeFromArrows(item.OnRotate);
             inputService.UnsubscribeFromJoystick(item.OnMove);
-            Destroy(item.gameObject );
+            Destroy(item.gameObject);
         }
         MoveObstacle[] newCurrentObstacles = new MoveObstacle[obstacles[0].ObstacleQuantity];
         for (int i = 0; i < newCurrentObstacles.Length; i++)
