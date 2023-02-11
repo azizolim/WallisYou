@@ -6,11 +6,10 @@ namespace UI
     public class Control : MonoBehaviour
     {
         [SerializeField] private Joystick fixedJoystick;
-        [SerializeField] private Button leftRotation;
-        [SerializeField] private Button rightRotation;
-
+        [SerializeField] private RotateWithTheArrows leftRotation;
+        [SerializeField] private RotateWithTheArrows rightRotation;
         public Joystick FixedJoystick => fixedJoystick;
-        public Button LeftRotation => leftRotation;
-        public Button RightRotation => rightRotation;
+        public RotateWithTheArrows LeftRotation => leftRotation;
+        public RotateWithTheArrows RightRotation => rightRotation;
     }
 }

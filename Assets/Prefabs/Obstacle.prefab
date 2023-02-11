@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c0a217216dfa314e9d2c129c88914c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObstacleQuantity: 1
   moveSpeed: 1
   rotateSpeed: 1

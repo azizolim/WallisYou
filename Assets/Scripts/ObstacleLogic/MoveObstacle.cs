@@ -2,25 +2,16 @@ using UnityEngine;
 
 public class MoveObstacle : MonoBehaviour
 {
+    public int ObstacleQuantity = 1;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
 
-    private IInputService _inputService;
-
-    void Start()
+    public void OnMove(Vector3 moveDirection)
     {
-        //Каким то образом получаем _inputService
+        transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.World);
     }
-
-    void Update()
+    public void OnRotate(Vector3 rotateDirection)
     {
-        if (_inputService.MoveDirection != Vector3.zero)
-        {
-            transform.Translate(_inputService.MoveDirection * moveSpeed * Time.deltaTime, Space.World);
-        }
-        if (_inputService.RotateDirection != Vector3.zero)
-        {
-            transform.Rotate(_inputService.RotateDirection * rotateSpeed);
-        }
+        transform.Rotate(rotateDirection, rotateSpeed);
     }
 }
