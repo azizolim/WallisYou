@@ -1,32 +1,27 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using UI.PlayPanel;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
 {
-    public class Play : MonoBehaviour
+    public delegate void PauseDelegate();
+
+    public class Play : MonoBehaviour, IInit<PauseDelegate>
     {
         [SerializeField] private Button pauseButton;
         [SerializeField] private Control control;
-        public Control Control => control;
-        
         private event PauseDelegate _pause;
+        public Control Control => control;
 
-       
-        public void PauseSubscribe(PauseDelegate pauseDelegate)
-        {
-            _pause += pauseDelegate;
-        }
 
         public void Awake()
         {
-            pauseButton.onClick.AddListener(()=> _pause?.Invoke());
+            pauseButton.onClick.AddListener(() => _pause?.Invoke());
+        }
+
+        public void Initialize(PauseDelegate @delegate)
+        {
+            _pause += @delegate;
         }
     }
-
-    public delegate void PauseDelegate();
-   
-
 }

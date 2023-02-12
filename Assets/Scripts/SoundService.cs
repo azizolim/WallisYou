@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -6,6 +7,7 @@ public class SoundService : MonoBehaviour
     private const string Music = "Music";
     private const string Effects = "Effects";
     [SerializeField] private AudioMixerGroup audioMixerGroup;
+
     private void Start()
     {
         if (PlayerPrefs.HasKey(Music))
@@ -13,31 +15,14 @@ public class SoundService : MonoBehaviour
         if (PlayerPrefs.HasKey(Effects))
             audioMixerGroup.audioMixer.SetFloat(Effects, PlayerPrefs.GetInt(Effects));
     }
-    public void ToggleMusic(bool enable)
-    {
-        if (enable)
-        {
-            audioMixerGroup.audioMixer.SetFloat(Music, 0);
-            PlayerPrefs.SetInt(Music, 0);
-        }
-        else
-        {
-            audioMixerGroup.audioMixer.SetFloat(Music, -80);
-            PlayerPrefs.SetInt(Music, -80);
-        }
-    }
-    public void ToggleEffects(bool enable)
-    {
-        if (enable)
-        {
-            audioMixerGroup.audioMixer.SetFloat(Effects, 0);
-            PlayerPrefs.SetInt(Effects, 0);
-        }
-        else
-        {
-            audioMixerGroup.audioMixer.SetFloat(Effects, -80);
-            PlayerPrefs.SetInt(Effects, -80);
 
-        }
+    private void Update()
+    {
+        audioMixerGroup.audioMixer.GetFloat(Music, out var musicValue);
+        if ((int)musicValue != PlayerPrefs.GetInt(Music))
+            audioMixerGroup.audioMixer.SetFloat(Music, musicValue);
+        audioMixerGroup.audioMixer.GetFloat(Music, out var effectValue);
+        if ((int)effectValue != PlayerPrefs.GetInt(Effects))
+            audioMixerGroup.audioMixer.SetFloat(Effects, PlayerPrefs.GetInt(Effects));
     }
 }

@@ -1,60 +1,60 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Input;
 using UnityEngine;
-using UnityEngine.XR;
 
-public class ObstacleService : MonoBehaviour
+namespace ObstacleLogic
 {
-    [SerializeField] private List<MoveObstacle> obstacles;
-    [SerializeField] private List<CompleteTrigger> completeTriggers;
-    [SerializeField] private MoveObstacle[] curentObstacles;
-    private InputService _inputService;
-
-    public void SetInputService(InputService inputService)
+    public class ObstacleService : MonoBehaviour
     {
-        _inputService = inputService;
-    }
+        [SerializeField] private List<MoveObstacle> obstacles;
+        [SerializeField] private List<CompleteTrigger> completeTriggers;
+        [SerializeField] private MoveObstacle[] curentObstacles;
+        private InputService _inputService;
+
+        public void SetInputService(InputService inputService)
+        {
+            _inputService = inputService;
+        }
     
-    private void Start()
-    {
-        foreach (CompleteTrigger item in completeTriggers)
+        private void Start()
         {
-            item.SubscribeToComplete(OnObstacleComplete);
+            foreach (CompleteTrigger item in completeTriggers)
+            {
+                item.SubscribeToComplete(OnObstacleComplete);
+            }
+            foreach (MoveObstacle item in curentObstacles)
+            {
+                _inputService.SubscribeToArrows(item.OnRotate);
+                _inputService.SubscribeToJoystick(item.OnMove);
+            }
         }
-        foreach (MoveObstacle item in curentObstacles)
-        {
-            _inputService.SubscribeToArrows(item.OnRotate);
-            _inputService.SubscribeToJoystick(item.OnMove);
-        }
-    }
 
-    private void OnObstacleComplete()
-    {
-        foreach (var item in curentObstacles)
+        private void OnObstacleComplete()
         {
-            _inputService.UnsubscribeFromArrows(item.OnRotate);
-            _inputService.UnsubscribeFromJoystick(item.OnMove);
-            Destroy(item.gameObject);
+            foreach (var item in curentObstacles)
+            {
+                _inputService.UnsubscribeFromArrows(item.OnRotate);
+                _inputService.UnsubscribeFromJoystick(item.OnMove);
+                Destroy(item.gameObject);
+            }
+            MoveObstacle[] newCurrentObstacles = new MoveObstacle[obstacles[0].ObstacleQuantity];
+            for (int i = 0; i < newCurrentObstacles.Length; i++)
+            {
+                newCurrentObstacles[i] = obstacles[0];
+                _inputService.SubscribeToArrows(newCurrentObstacles[i].OnRotate);
+                _inputService.SubscribeToJoystick(newCurrentObstacles[i].OnMove);
+                obstacles.RemoveAt(0);
+            }
+            curentObstacles = newCurrentObstacles;
         }
-        MoveObstacle[] newCurrentObstacles = new MoveObstacle[obstacles[0].ObstacleQuantity];
-        for (int i = 0; i < newCurrentObstacles.Length; i++)
-        {
-            newCurrentObstacles[i] = obstacles[0];
-            _inputService.SubscribeToArrows(newCurrentObstacles[i].OnRotate);
-            _inputService.SubscribeToJoystick(newCurrentObstacles[i].OnMove);
-            obstacles.RemoveAt(0);
-        }
-        curentObstacles = newCurrentObstacles;
-    }
 
-    private void OnDestroy()
-    {
-
-        foreach (CompleteTrigger item in completeTriggers)
+        private void OnDestroy()
         {
-            item.UnsubscribeFromComplete(OnObstacleComplete);
+
+            foreach (CompleteTrigger item in completeTriggers)
+            {
+                item.UnsubscribeFromComplete(OnObstacleComplete);
+            }
         }
     }
 }

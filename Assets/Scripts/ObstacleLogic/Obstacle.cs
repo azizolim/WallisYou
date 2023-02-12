@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Obstacle : MonoBehaviour
+namespace ObstacleLogic
 {
-    public abstract void OnTriggerEnter(Collider other);
+    public abstract class Obstacle : MonoBehaviour
+    {
+        public abstract void OnTriggerEnter(Collider other);
+    }
 }

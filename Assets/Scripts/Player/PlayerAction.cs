@@ -1,12 +1,12 @@
-using System;
-using System.Security.Cryptography.X509Certificates;
+using Bank;
 using DG.Tweening;
+using OnlineLeaderboards;
 using UI;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerAction : MonoBehaviour, IInteractable
+    public class PlayerAction : MonoBehaviour, IInteractable, IInit<Die>
     {
         [SerializeField] private Rigidbody rigidbody;
         [SerializeField] private float speed = 5f;
@@ -20,15 +20,9 @@ namespace Player
         private PauseDelegate _pauseDelegate;
         private Vector3 _direction;
 
-        public  Reborn RebornDelegate => _reborn;
+        public Reborn RebornDelegate => _reborn;
         public PauseDelegate PauseDelegate => _pauseDelegate;
-        public Score Score => score; 
-
-        public void SubscribeDie(Die dieDelegate)
-        {
-            _die += dieDelegate;
-            
-        }
+        public Score Score => score;
 
         void Awake()
         {
@@ -39,16 +33,18 @@ namespace Player
 
         void FixedUpdate()
         {
-            if (_isDead||_isPaused) return;
+            if (_isDead || _isPaused) return;
             rigidbody.velocity = _direction * speed;
         }
+
         public void AddScore(int value = 1)
         {
             score.Add(value);
         }
+
         public void Die()
         {
-            _isDead =true;
+            _isDead = true;
             Debug.Log("Die");
             _die?.Invoke();
         }
@@ -63,8 +59,14 @@ namespace Player
             _isDead = false;
             transform.DOMoveZ(transform.position.z - 15, 0.5f);
         }
+
+        public void Initialize(Die @delegate)
+        {
+            _die += @delegate;
+        }
     }
 
     public delegate void Reborn();
+
     public delegate void Die();
 }

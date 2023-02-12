@@ -1,49 +1,50 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
-public class InputService : MonoBehaviour
+namespace Input
 {
-    [SerializeField] private Play play;
-    private Action<Vector3> _joystick;
-    private Action<Vector3> _arrows;
-    private void Update()
+    public class InputService : MonoBehaviour
     {
-        Vector3 rotateLeftDirection = play.Control.LeftRotation.RotateDirection;
-        if (rotateLeftDirection != Vector3.zero)
+        [SerializeField] private Play play;
+        private Action<Vector3> _joystick;
+        private Action<Vector3> _arrows;
+        private void Update()
         {
-            _arrows.Invoke(rotateLeftDirection);
-        }
-        else
-        {
-            Vector3 rotateRightDirection = play.Control.RightRotation.RotateDirection;
-            if (rotateRightDirection != Vector3.zero)
+            Vector3 rotateLeftDirection = play.Control.LeftRotation.RotateDirection;
+            if (rotateLeftDirection != Vector3.zero)
             {
-                _arrows.Invoke(rotateRightDirection);
+                _arrows.Invoke(rotateLeftDirection);
+            }
+            else
+            {
+                Vector3 rotateRightDirection = play.Control.RightRotation.RotateDirection;
+                if (rotateRightDirection != Vector3.zero)
+                {
+                    _arrows.Invoke(rotateRightDirection);
+                }
+            }
+            Vector3 moveDirection = play.Control.FixedJoystick.Direction;
+            if (moveDirection != Vector3.zero)
+            {
+                _joystick.Invoke(moveDirection);
             }
         }
-        Vector3 moveDirection = play.Control.FixedJoystick.Direction;
-        if (moveDirection != Vector3.zero)
+        public void SubscribeToJoystick(Action<Vector3> subscriber)
         {
-            _joystick.Invoke(moveDirection);
+            _joystick += subscriber;
         }
-    }
-    public void SubscribeToJoystick(Action<Vector3> subscriber)
-    {
-        _joystick += subscriber;
-    }
-    public void UnsubscribeFromJoystick(Action<Vector3> subscriber)
-    {
-        _joystick -= subscriber;
-    }
-    public void SubscribeToArrows(Action<Vector3> subscriber)
-    {
-        _arrows+=subscriber;    
-    }
-    public void UnsubscribeFromArrows(Action<Vector3> subscriber)
-    {
-        _arrows -= subscriber;
+        public void UnsubscribeFromJoystick(Action<Vector3> subscriber)
+        {
+            _joystick -= subscriber;
+        }
+        public void SubscribeToArrows(Action<Vector3> subscriber)
+        {
+            _arrows+=subscriber;    
+        }
+        public void UnsubscribeFromArrows(Action<Vector3> subscriber)
+        {
+            _arrows -= subscriber;
+        }
     }
 }

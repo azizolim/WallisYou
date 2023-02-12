@@ -1,6 +1,6 @@
-using System;
-using System.Diagnostics;
+using Level;
 using Player;
+using UI.PlayPanel;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,24 +12,33 @@ namespace UI
         [SerializeField] private CanvasGroup pausePanel;
         [SerializeField] private CanvasGroup gameOverPanel;
         [SerializeField] private CanvasGroup winPanel;
-        [SerializeField] private PlayerAction player;
-        [SerializeField] private LevelControl levelControl;
         [SerializeField] private CanvasGroup leaderBoardPanel;
         [SerializeField] private CanvasGroup namePanel;
+        [SerializeField] private PlayerAction player;
+        [SerializeField] private LevelControl levelControl;
+        private Vibration _vibration;
+
+        private IInit<Die> _initDie;
+        private IInit<PauseDelegate> _initPause;
+        private IInit<Reborn> _initReborn;
+        private IInit<UnityAction> _initAction;
+        private IInit<UnityAction<bool>> _initBoolAction;
+        private IInit<WinDelegate> _initWin;
 
         private Die _dieDelegate;
         private PauseDelegate _pauseDelegate;
         private WinDelegate _winDelegate;
         private ChangePanel _changePanel;
-        
+
         private event LeaderboardDelegate _leaderboard;
-        private event PauseDelegate _pause; 
-        
+        private event PauseDelegate _pause;
+
 
         private void Start()
         {
             _changePanel = new ChangePanel();
-            
+            _vibration = new Vibration();
+
             InitializeDelegates();
             InitializeSubscribers();
             CheckNewPlayer();
@@ -59,57 +68,67 @@ namespace UI
 
         private void InitializeSubscribers()
         {
-            namePanel.TryGetComponent(out NamePanel name);
-            name.SubscribeAction(OnPlayPanel,()=>_pause?.Invoke());
-            playPanel.TryGetComponent(out Play play);
-            play.PauseSubscribe(player.PauseDelegate);
-            play.PauseSubscribe(_pauseDelegate);
+            _initDie = player;
+            _initDie.Initialize(_vibration.TriggerVibrate);
+            _initDie.Initialize(_dieDelegate);
 
-            pausePanel.TryGetComponent(out Pause pause);
-            pause.SubscribeResume(player.PauseDelegate);
-            pause.SubscribeResume(()=>OnPlayPanel());
-            _pause += player.PauseDelegate;
-            
-            gameOverPanel.TryGetComponent(out GameOver gameOver);
-            gameOver.SubscribeReborn(player.RebornDelegate);
-            gameOver.SubscribeReborn(()=>OnPlayPanel());
-            
+            namePanel.TryGetComponent(out _initAction);
+            _initAction.Initialize(OnPlayPanel);
+            _initAction.Initialize(() => _pause?.Invoke());
+
+            playPanel.TryGetComponent(out _initPause);
+            _initPause.Initialize(player.PauseDelegate);
+            _initPause.Initialize(_pauseDelegate);
+
+            pausePanel.TryGetComponent(out _initPause);
+            _initPause.Initialize(player.PauseDelegate);
+            _initPause.Initialize(OnPlayPanel);
+
+            pausePanel.TryGetComponent(out _initBoolAction);
+            _initBoolAction.Initialize(_vibration.OnVibration);
+
+            gameOverPanel.TryGetComponent(out _initReborn);
+            _initReborn.Initialize(player.RebornDelegate);
+            _initReborn.Initialize(OnPlayPanel);
+
+            _initWin = levelControl;
+            _initWin.Initialize(_winDelegate);
+
             leaderBoardPanel.TryGetComponent(out Leaderboard leaderboard);
             _leaderboard += leaderboard.LeaderboardDelegate;
-            
-            player.SubscribeDie(_dieDelegate);
-            
-            levelControl.CurrentLevel.TriggerFinish.SubscribeWin(_winDelegate);
-
+            _pause += player.PauseDelegate;
         }
 
         private void OnPlayPanel()
         {
             _changePanel.SetPanel(playPanel);
         }
+
         private void OnPausePanel()
         {
             _changePanel.SetPanel(pausePanel);
         }
+
         private void GameOverPanel()
         {
             OnLeaderboard();
             _leaderboard?.Invoke(OnGameOverPanel, player.Score.Value);
-            
-        }        
+        }
+
         private void OnGameOverPanel()
         {
             _changePanel.SetPanel(gameOverPanel);
         }
+
         private void WinPanel()
         {
             OnLeaderboard();
             _leaderboard?.Invoke(OnWinPanel, player.Score.Value);
         }
+
         private void OnWinPanel()
         {
             _changePanel.SetPanel(winPanel);
-
         }
 
         private void OnLeaderboard()
@@ -117,9 +136,8 @@ namespace UI
             _changePanel.SetPanel(leaderBoardPanel);
         }
     }
-    
+
     public delegate void WinDelegate();
 
     public delegate void LeaderboardDelegate(UnityAction action, int score);
 }
-

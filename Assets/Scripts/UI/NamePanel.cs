@@ -1,36 +1,39 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using OnlineLeaderboards;
 using TMPro;
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class NamePanel : MonoBehaviour
+namespace UI
 {
-    [SerializeField] private Button saveButton;
-    [SerializeField] private TMP_InputField playerID;
-    [SerializeField] private LeaderboardController leaderboardController;
-
-    private UnityAction _action;
-    private UnityAction _action1;
-    public void SubscribeAction(UnityAction action, UnityAction action1)
+    public class NamePanel : MonoBehaviour, IInit<UnityAction>
     {
-        _action = action;
-        _action1 = action1;
-    }
+        [SerializeField] private Button saveButton;
+        [SerializeField] private TMP_InputField playerID;
+        [SerializeField] private LeaderboardController leaderboardController;
 
-    private void Start()
-    {
-        saveButton.onClick.AddListener(SetID);
-    }
+        private List<UnityAction> _actions;
 
-    private void SetID()
-    {
-        PlayerPrefs.SetString("PlayerID", playerID.text);
-        leaderboardController.SetPlayerName();
-        _action?.Invoke();
-        _action1?.Invoke();
-        
+        private void Start()
+        {
+            _actions = new List<UnityAction>();
+            saveButton.onClick.AddListener(SetID);
+        }
+
+        private void SetID()
+        {
+            PlayerPrefs.SetString("PlayerID", playerID.text);
+            leaderboardController.SetPlayerName();
+            foreach (var action in _actions)
+            {
+                action?.Invoke();
+            }
+        }
+
+        public void Initialize(UnityAction @delegate)
+        {
+            _actions.Add(@delegate);
+        }
     }
 }

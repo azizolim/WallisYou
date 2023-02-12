@@ -1,126 +1,126 @@
-using System;
 using System.Collections;
-using System.Threading.Tasks;
-using UnityEngine;
 using LootLocker.Requests;
 using UI;
+using UnityEngine;
 
-
-public class LeaderboardController : MonoBehaviour
+namespace OnlineLeaderboards
 {
-    private int _leaderboardID = 11355;
-    private event PlayerInfoInstantiated _playerInfo;
-
-
-    private void Start()
+    public class LeaderboardController : MonoBehaviour
     {
-        StartCoroutine(LoginRoutine());
-    }
+        private int _leaderboardID = 11355;
+        private event PlayerInfoInstantiated _playerInfo;
 
-    public void SubscribeInstantiate(PlayerInfoInstantiated playerInfoInstantiated)
-    {
-        _playerInfo += playerInfoInstantiated;
-    }
-    
-    IEnumerator LoginRoutine()
-    {
-        bool done = false;
 
-        LootLockerSDKManager.StartGuestSession((response) =>
+        private void Start()
         {
-            if (response.success)
-            {
-                Debug.Log("player was logged in");
-                PlayerPrefs.SetString("PlayerID", response.player_id.ToString());
-                done = true;
-            }
-            else
-            {
-                Debug.Log("cannot login");
-                done = true;
-            }
-        });
-        yield return new WaitWhile(() => done == false);
-        yield return FetchTopHighScoresRoutine();
-    }
+            StartCoroutine(LoginRoutine());
+        }
 
-    public void SetPlayerName()
-    {
-        LootLockerSDKManager.SetPlayerName(PlayerPrefs.GetString("PlayerID"), (response) =>
+        public void SubscribeInstantiate(PlayerInfoInstantiated playerInfoInstantiated)
+        {
+            _playerInfo += playerInfoInstantiated;
+        }
+    
+        IEnumerator LoginRoutine()
+        {
+            bool done = false;
+
+            LootLockerSDKManager.StartGuestSession((response) =>
             {
                 if (response.success)
                 {
-                    Debug.Log("Successfully set player name");
+                    Debug.Log("player was logged in");
+                    PlayerPrefs.SetString("PlayerID", response.player_id.ToString());
+                    done = true;
                 }
                 else
                 {
-                    Debug.Log("could not set player name" + response.Error);
+                    Debug.Log("cannot login");
+                    done = true;
                 }
-            }
-        );
-        StartCoroutine(FetchTopHighScoresRoutine());
-    }
-
-
-public IEnumerator SubmitScoreRoutine(int scoreToUpload)
-{
-    bool done = false;
-    string playerID = PlayerPrefs.GetString("PlayerID");
-    LootLockerSDKManager.SubmitScore(playerID, scoreToUpload, _leaderboardID, (response) =>
-    {
-        if (response.success)
-        {
-            Debug.Log("Score Uploaded");
-            done = true;
+            });
+            yield return new WaitWhile(() => done == false);
+            yield return FetchTopHighScoresRoutine();
         }
-        else
+
+        public void SetPlayerName()
         {
-            Debug.Log("Failed" + response.Error);
-            done = true;
+            LootLockerSDKManager.SetPlayerName(PlayerPrefs.GetString("PlayerID"), (response) =>
+                {
+                    if (response.success)
+                    {
+                        Debug.Log("Successfully set player name");
+                    }
+                    else
+                    {
+                        Debug.Log("could not set player name" + response.Error);
+                    }
+                }
+            );
+            StartCoroutine(FetchTopHighScoresRoutine());
         }
-    });
-    yield return new WaitWhile(() => done == false);
-    yield return FetchTopHighScoresRoutine();
-}
 
-public IEnumerator FetchTopHighScoresRoutine()
-{
-    bool done = false;
-    LootLockerSDKManager.GetScoreListMain(_leaderboardID, 10, 0, (response) =>
-    {
-        if (response.success)
+
+        public IEnumerator SubmitScoreRoutine(int scoreToUpload)
         {
-            string tempPlayerNames = "Names\n";
-            string tempPlayerScores = "Scores\n";
-
-            LootLockerLeaderboardMember[] members = response.items;
-            for (int i = 0; i < members.Length; i++)
+            bool done = false;
+            string playerID = PlayerPrefs.GetString("PlayerID");
+            LootLockerSDKManager.SubmitScore(playerID, scoreToUpload, _leaderboardID, (response) =>
             {
-                tempPlayerNames += members[i].rank + ". ";
-                if (members[i].player.name != "")
+                if (response.success)
                 {
-                    tempPlayerNames += members[i].player.name;
+                    Debug.Log("Score Uploaded");
+                    done = true;
                 }
                 else
                 {
-                    tempPlayerNames += members[i].player.id;
+                    Debug.Log("Failed" + response.Error);
+                    done = true;
                 }
-
-                tempPlayerScores += members[i].score + "\n";
-                tempPlayerNames += "\n";
-            }
-
-            done = true;
-            _playerInfo?.Invoke(tempPlayerNames, tempPlayerScores);
+            });
+            yield return new WaitWhile(() => done == false);
+            yield return FetchTopHighScoresRoutine();
         }
-        else
+
+        public IEnumerator FetchTopHighScoresRoutine()
         {
-            Debug.Log("failed" + response.Error);
-            done = true;
+            bool done = false;
+            LootLockerSDKManager.GetScoreListMain(_leaderboardID, 10, 0, (response) =>
+            {
+                if (response.success)
+                {
+                    string tempPlayerNames = "Names\n";
+                    string tempPlayerScores = "Scores\n";
+
+                    LootLockerLeaderboardMember[] members = response.items;
+                    for (int i = 0; i < members.Length; i++)
+                    {
+                        tempPlayerNames += members[i].rank + ". ";
+                        if (members[i].player.name != "")
+                        {
+                            tempPlayerNames += members[i].player.name;
+                        }
+                        else
+                        {
+                            tempPlayerNames += members[i].player.id;
+                        }
+
+                        tempPlayerScores += members[i].score + "\n";
+                        tempPlayerNames += "\n";
+                    }
+
+                    done = true;
+                    _playerInfo?.Invoke(tempPlayerNames, tempPlayerScores);
+                }
+                else
+                {
+                    Debug.Log("failed" + response.Error);
+                    done = true;
+                }
+            });
+            yield return new WaitWhile(() => done == false);
         }
-    });
-    yield return new WaitWhile(() => done == false);
-}
 
 
+    }
 }

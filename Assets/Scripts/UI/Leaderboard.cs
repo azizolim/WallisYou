@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using Player;
+using OnlineLeaderboards;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

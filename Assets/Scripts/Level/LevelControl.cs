@@ -1,39 +1,46 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Input;
+using ObstacleLogic;
+using UI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class LevelControl : MonoBehaviour
+namespace Level
 {
-    [SerializeField] private LevelLinks[] levels;
-    [SerializeField] private InputService inputService;
-    private string _currentLevel = "CurrentLevel";
-    public LevelLinks CurrentLevel { get; private set; }
-
-    private void Awake()
+    public class LevelControl : MonoBehaviour, IInit<WinDelegate>
     {
-        if (!PlayerPrefs.HasKey(_currentLevel))
+        [SerializeField] private LevelLinks[] levels;
+        [SerializeField] private InputService inputService;
+        private string _currentLevel = "CurrentLevel";
+        private LevelLinks _currentLevelInstance;
+
+        private void Awake()
         {
-            PlayerPrefs.SetInt(_currentLevel, 0);
-            Instantiate(PlayerPrefs.GetInt(_currentLevel));
+            if (!PlayerPrefs.HasKey(_currentLevel))
+            {
+                PlayerPrefs.SetInt(_currentLevel, 0);
+                Instantiate(PlayerPrefs.GetInt(_currentLevel));
+            }
+            else
+            {
+                Instantiate(PlayerPrefs.GetInt(_currentLevel));
+            }
         }
-        else
-        {
-            Instantiate(PlayerPrefs.GetInt(_currentLevel));
-        }
-    }
 
     
-    private void Instantiate(int level)
-    {
-        if (level > levels.Length-1)
+        private void Instantiate(int level)
         {
-            level = 0;
-            PlayerPrefs.SetInt(_currentLevel, level);
+            if (level > levels.Length-1)
+            {
+                level = 0;
+                PlayerPrefs.SetInt(_currentLevel, level);
+            }
+            _currentLevelInstance= Instantiate(levels[level]);
+            _currentLevelInstance.TryGetComponent(out ObstacleService service);
+            service.SetInputService(inputService);
         }
-       CurrentLevel= Instantiate(levels[level]);
-       CurrentLevel.TryGetComponent(out ObstacleService service);
-       service.SetInputService(inputService);
+
+        public void Initialize(WinDelegate @delegate)
+        {
+            _currentLevelInstance.TriggerFinish.SubscribeWin(@delegate);
+        }
     }
 }

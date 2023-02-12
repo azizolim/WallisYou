@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelLinks : MonoBehaviour
+namespace Level
 {
-    [SerializeField] private TriggerFinish finish;
+    public class LevelLinks : MonoBehaviour
+    {
+        [SerializeField] private TriggerFinish finish;
 
-    public TriggerFinish TriggerFinish => finish;
+        public TriggerFinish TriggerFinish => finish;
+    }
 }

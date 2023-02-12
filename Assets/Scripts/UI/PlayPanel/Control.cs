@@ -1,8 +1,7 @@
-﻿using UI.PlayPanel;
+﻿using Joystick_Pack.Scripts.Base;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace UI
+namespace UI.PlayPanel
 {
     public class Control : MonoBehaviour
     {
