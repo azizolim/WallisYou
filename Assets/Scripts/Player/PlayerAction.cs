@@ -12,8 +12,11 @@ namespace Player
         [SerializeField] private float speed = 5f;
         [SerializeField] private Score score;
         [SerializeField] private PositionController positionController;
+        [SerializeField] private MeshFilter meshFilter;
+        [SerializeField] private MeshCollider meshCollider;
         private bool _isPaused;
         private bool _isDead;
+        private ChangeMesh _changeMesh;
         private event Die _die;
         private Reborn _reborn;
 
@@ -26,6 +29,7 @@ namespace Player
 
         void Awake()
         {
+            _changeMesh = new ChangeMesh(meshCollider, meshFilter);   
             _direction = Vector3.forward;
             _pauseDelegate = Pause;
             _reborn = Reborn;
@@ -71,6 +75,11 @@ namespace Player
             transform.DOMoveX(position.x, 0.5f);
             transform.DOMoveY(position.y, 0.5f);
             transform.DORotate(new Vector3(0, transform.rotation.eulerAngles.y+180,  transform.rotation.eulerAngles.z+180), 0.5f);
+        }
+
+        public void SetMesh(Mesh newMesh)
+        {
+            _changeMesh.SetMesh(newMesh);
         }
     }
 

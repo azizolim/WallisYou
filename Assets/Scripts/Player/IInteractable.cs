@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 namespace Player
 {
     public interface IInteractable
@@ -6,5 +8,6 @@ namespace Player
         public void Die();
         public void AddScore(int score);
         public void SetPosition(int key);
+        public void SetMesh(Mesh newMesh);
     }
 }
