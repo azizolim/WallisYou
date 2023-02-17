@@ -11,7 +11,7 @@ namespace Player
         [SerializeField] private Rigidbody rigidbody;
         [SerializeField] private float speed = 5f;
         [SerializeField] private Score score;
-        [SerializeField] private LeaderboardController leaderboard;
+        [SerializeField] private PositionController positionController;
         private bool _isPaused;
         private bool _isDead;
         private event Die _die;
@@ -63,6 +63,14 @@ namespace Player
         public void Initialize(Die @delegate)
         {
             _die += @delegate;
+        }
+
+        public void SetPosition(int key)
+        {
+            var position = positionController.GetPosition(key).transform.position;
+            transform.DOMoveX(position.x, 0.5f);
+            transform.DOMoveY(position.y, 0.5f);
+            transform.DORotate(new Vector3(0, transform.rotation.eulerAngles.y+180,  transform.rotation.eulerAngles.z+180), 0.5f);
         }
     }
 
