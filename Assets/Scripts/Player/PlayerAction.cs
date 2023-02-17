@@ -11,9 +11,10 @@ namespace Player
         [SerializeField] private Rigidbody rigidbody;
         [SerializeField] private float speed = 5f;
         [SerializeField] private Score score;
-        [SerializeField] private PositionController positionController;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshCollider meshCollider;
+        private PositionController _positionController;
+
         private bool _isPaused;
         private bool _isDead;
         private ChangeMesh _changeMesh;
@@ -69,13 +70,19 @@ namespace Player
             _die += @delegate;
         }
 
+        public void SetPositionController(PositionController positionControl)
+        {
+            _positionController = positionControl;
+        }
+
         public void SetPosition(int key)
         {
-            var position = positionController.GetPosition(key).transform.position;
+            var position = _positionController.GetPosition(key).transform.position;
             transform.DOMoveX(position.x, 0.5f);
             transform.DOMoveY(position.y, 0.5f);
             transform.DORotate(new Vector3(0, transform.rotation.eulerAngles.y+180,  transform.rotation.eulerAngles.z+180), 0.5f);
         }
+        
 
         public void SetMesh(Mesh newMesh)
         {

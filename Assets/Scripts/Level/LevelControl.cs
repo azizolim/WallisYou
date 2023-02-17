@@ -1,5 +1,6 @@
 using Input;
 using ObstacleLogic;
+using Player;
 using UI;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Level
     {
         [SerializeField] private LevelLinks[] levels;
         [SerializeField] private InputService inputService;
+        [SerializeField] private PlayerAction player;
         private string _currentLevel = "CurrentLevel";
         private LevelLinks _currentLevelInstance;
 
@@ -36,7 +38,10 @@ namespace Level
             _currentLevelInstance= Instantiate(levels[level]);
             _currentLevelInstance.TryGetComponent(out ObstacleService service);
             service.SetInputService(inputService);
+            player.SetPositionController(_currentLevelInstance.PositionController);
         }
+        
+        
 
         public void Initialize(WinDelegate @delegate)
         {
