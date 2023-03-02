@@ -28,6 +28,17 @@ namespace Player
         public PauseDelegate PauseDelegate => _pauseDelegate;
         public Score Score => score;
 
+        public void Construct(PositionController positionController,bool isPaused, bool isDead, ChangeMesh changeMesh, Die die, Reborn reborn, PauseDelegate pauseDelegate, Vector3 direction)
+        {
+            _positionController = positionController;
+            _isPaused = isPaused;
+            _isDead = isDead;
+            _changeMesh = changeMesh;
+            _die = die;
+            _reborn = reborn;
+            _pauseDelegate = pauseDelegate;
+            _direction = direction;
+        }
         void Awake()
         {
             _changeMesh = new ChangeMesh(meshCollider, meshFilter);   
@@ -80,13 +91,21 @@ namespace Player
             var position = _positionController.GetPosition(key).transform.position;
             transform.DOMoveX(position.x, 0.5f);
             transform.DOMoveY(position.y, 0.5f);
-            transform.DORotate(new Vector3(0, transform.rotation.eulerAngles.y+180,  transform.rotation.eulerAngles.z+180), 0.5f);
+            //transform.DORotate(new Vector3(0, transform.rotation.eulerAngles.y+180,  transform.rotation.eulerAngles.z+180), 0.5f);
         }
         
 
         public void SetMesh(Mesh newMesh)
         {
             _changeMesh.SetMesh(newMesh);
+        }
+
+        public void Clone(Mesh newMesh, int key)
+        {
+            var clone = Instantiate(this);
+            clone.Construct(_positionController, _isPaused, _isDead, _changeMesh, _die, _reborn, _pauseDelegate, _direction);
+            clone.SetPosition(key);
+            clone.SetMesh(newMesh);
         }
     }
 

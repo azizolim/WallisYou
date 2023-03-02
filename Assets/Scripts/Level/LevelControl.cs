@@ -27,7 +27,7 @@ namespace Level
             }
         }
 
-    
+
         private void Instantiate(int level)
         {
             if (level > levels.Length-1)
